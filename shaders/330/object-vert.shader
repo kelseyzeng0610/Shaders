@@ -6,6 +6,8 @@ layout(location = 1) in vec3 myNormal;
 out vec3 reflectDir;
 out vec3 fragPosition;
 out vec3 fragNormal;
+out vec3 fragPositionObjectSpace; // Add this line
+out vec3 fragPositionWorldSpace;  // For lighting calculations
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -17,7 +19,9 @@ void main()
 {
     // Calculate world space position
     vec4 worldPosition = modelMatrix * vec4(myPosition, 1.0);
+    fragPositionWorldSpace = worldPosition.xyz;
     fragPosition = worldPosition.xyz;
+    fragPositionObjectSpace = myPosition;
     
     // Calculate normal in world space
     fragNormal = normalize(normalMatrix * myNormal);
@@ -34,4 +38,5 @@ void main()
     
     // Output final position
     gl_Position = perspectiveMatrix * modelViewMatrix * vec4(myPosition, 1);
+
 }
