@@ -6,6 +6,7 @@ in vec3 fragNormal;
 in vec3 reflectDir;
 in vec3 fragPositionObjectSpace;
 in vec3 fragPositionWorldSpace;
+
 // Output color
 out vec4 outputColor;
 
@@ -29,9 +30,11 @@ void main()
     vec4 envColor = texture(environmentMap, texCoords);
     vec3 posOS = fragPositionObjectSpace;
 	vec3 normalizedFragNormal = normalize(fragNormal);
-    vec2 objTexCoord = posOS.xy * 0.5;
+    vec2 objTexCoord = vec2(
+        0.5 + atan(posOS.z, posOS.x) / (2.0 * 3.1415926),
+        0.5 - acos(posOS.y / length(posOS)) / 3.1415926
+    );
 
-   
     // Sample the object's own texture
     vec4 objColor = texture(objectTexture, objTexCoord);
 
