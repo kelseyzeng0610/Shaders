@@ -3,6 +3,7 @@
 // Inputs from the vertex shader
 in vec3 fragPosition;
 in vec3 fragNormal;
+in vec3 reflectDir;
 
 // Output color
 out vec4 outputColor;
@@ -13,30 +14,24 @@ uniform sampler2D objectTexture;   // Bound to texture unit 1
 uniform vec3 lightPosition;
 uniform float blendFactor;        // From Texture Blend slider
 uniform bool useDiffuse;   
+
 void main()
 {
-    // Compute view direction (assuming camera at origin)
-    vec3 viewDir = normalize(-fragPosition);
-
-    // Reflect view direction around the normal
-    vec3 reflectDir = reflect(viewDir, normalize(fragNormal));
-
     // Compute texture coordinates for environment map (spherical mapping)
-    float m = 2.0 * sqrt(
-        reflectDir.x * reflectDir.x + 
-        reflectDir.y * reflectDir.y + 
-        (reflectDir.z + 1.0) * (reflectDir.z + 1.0)
+    vec3 normalizedReflectDir = normalize(reflectDir);
+    vec2 texCoords = vec2(
+        atan(normalizedReflectDir.z, normalizedReflectDir.x) / (2.0 * 3.1415926),
+        acos(normalizedReflectDir.y) / 3.1415926
     );
-    vec2 envTexCoord = reflectDir.xy / m + 0.5;
-	envTexCoord.y = 1.0 - envTexCoord.y;
 
     // Sample the environment map
-    vec4 envColor = texture(environmentMap, envTexCoord);
+    vec4 envColor = texture(environmentMap, texCoords);
 
-	vec3 n = normalize(fragNormal);
-    float u = 0.5 + atan(n.z, n.x) / (2.0 * 3.1415926);
-    float v = 0.5 - asin(n.y) / 3.1415926;
-    vec2 objTexCoord = vec2(u, v);
+	vec3 normalizedFragNormal = normalize(fragNormal);
+    vec2 objTexCoord = vec2(
+        atan(normalizedFragNormal.z, normalizedFragNormal.x) / (2.0 * 3.1415926),
+        asin(normalizedFragNormal.y) / 3.1415926
+    );
 
     // Sample the object's own texture
     vec4 objColor = texture(objectTexture, objTexCoord);

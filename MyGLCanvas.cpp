@@ -125,12 +125,8 @@ void MyGLCanvas::drawScene() {
 	glUniform1i(glGetUniformLocation(objectProgramID, "environMap"), 0);
 	glUniform1i(glGetUniformLocation(objectProgramID, "objectTexture"), 1);
 
-
 	//TODO: add variable binding
-
 	myObjectPLY->renderVBO(myShaderManager->getShaderProgram("objectShaders")->programID);
-
-
 
 	//second draw the enviroment sphere
 	GLuint environmentProgramID = myShaderManager->getShaderProgram("environmentShaders")->programID;

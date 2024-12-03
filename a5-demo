@@ -1,3 +1,0 @@
-#!/bin/sh
-dir="`dirname \"$0\"`"
-exec "$dir/a5-demo.app/Contents/MacOS/a5-demo" "$@"
